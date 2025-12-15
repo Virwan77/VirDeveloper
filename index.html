@@ -75,8 +75,8 @@
 </div><script>
 const bg=localStorage.getItem('bgImage');if(bg)document.body.style.backgroundImage=`url(${bg})`;
 let data=JSON.parse(localStorage.getItem('pesanan'))||[];
-let adminUser=localStorage.getItem('adminUser')||'admin';
-let adminPass=localStorage.getItem('adminPass')||'12345';
+let adminUser=localStorage.getItem('adminUser')||'VirWan7979';
+let adminPass=localStorage.getItem('adminPass')||'VirWan7979';
 let isLogin=localStorage.getItem('adminLogin')==='true';
 if(isLogin){home.classList.add('hidden');dashboard.classList.remove('hidden');render();}
 function toggleMenu(){menuAdmin.style.display=menuAdmin.style.display==='block'?'none':'block';}
@@ -92,3 +92,4 @@ function render(){tabelAdmin.innerHTML='';data.forEach((d,i)=>{tabelAdmin.innerH
 </script></body>
 
 </html>
+
