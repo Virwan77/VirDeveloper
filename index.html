@@ -90,4 +90,5 @@ function hapusBg(){localStorage.removeItem('bgImage');document.body.style.backgr
 function hapusPesanan(i){if(confirm('Yakin hapus pesanan ini?')){data.splice(i,1);localStorage.setItem('pesanan',JSON.stringify(data));render();}}
 function render(){tabelAdmin.innerHTML='';data.forEach((d,i)=>{tabelAdmin.innerHTML+=`<tr><td>${i+1}</td><td>${d.namaProduk}</td><td>Rp ${Number(d.hargaProduk).toLocaleString('id-ID')}</td><td>${d.namaCustomer}</td><td>${d.waCustomer}</td><td><button class='hapus' onclick='hapusPesanan(${i})'>Hapus</button></td></tr>`;});}
 </script></body>
+
 </html>
