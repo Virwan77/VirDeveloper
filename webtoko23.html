@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VirWan Store</title>
+  <style>
+    body{font-family:Arial;margin:0;background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed}
+    header{background:#2563eb;color:#fff;padding:15px;display:flex;justify-content:space-between;align-items:center}
+    .menu{cursor:pointer;font-size:22px;font-weight:bold}
+    .dropdown{position:absolute;top:60px;right:15px;background:#fff;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,.2);display:none}
+    .dropdown button{background:none;color:#000;border:none;padding:10px 20px;width:100%;text-align:left;cursor:pointer}
+    .container{max-width:900px;margin:30px auto;background:rgba(255,255,255,0.95);padding:20px;border-radius:10px}
+    input,button{width:100%;padding:10px;margin-bottom:10px;border-radius:6px;border:1px solid #ddd}
+    button{background:#2563eb;color:#fff;border:none;font-weight:bold;cursor:pointer}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .card{background:#f9fafb;padding:15px;border-radius:8px;border:1px solid #e5e7eb}
+    table{width:100%;border-collapse:collapse;margin-top:20px;background:#fff}
+    th,td{border:1px solid #ddd;padding:8px;text-align:center}
+    th{background:#2563eb;color:#fff}
+    .hapus{background:#ef4444}
+    .hidden{display:none}
+    @media(max-width:768px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header>
+  <h2>VIRWAN STORE</h2>
+  <div class="menu" onclick="toggleMenu()">⋮</div>
+</header><div class="dropdown" id="menuAdmin">
+  <button onclick="openLoginPage()">Login Admin</button>
+</div><div class="container" id="home">
+  <h3>ISI PEMESANAN ANDA SESUAI YANG ANDA PILIH KE ADMIN BIAR ADMIN LANJUTKAN PROSESNYA</h3>
+  <input type="text" id="namaProduk" placeholder="Nama Produk">
+  <input type="number" id="hargaProduk" placeholder="Harga Produk">
+  <input type="text" id="namaCustomer" placeholder="Nama Customer">
+  <input type="tel" id="waCustomer" placeholder="No WhatsApp Customer">
+  <button onclick="kirimPesanan()">Kirim</button>
+</div><div class="container hidden" id="loginPage">
+  <h3>Login Admin</h3>
+  <input type="text" id="user" placeholder="Username">
+  <input type="password" id="pass" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div><div class="container hidden" id="dashboard">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <h3>Dashboard Admin</h3>
+    <button onclick="logout()" style="width:auto">Logout</button>
+  </div>  <div class="row">
+    <div class="card">
+      <h4>Background Website</h4>
+      <input type="file" accept="image/*" onchange="uploadBg(this)">
+      <button onclick="hapusBg()">Hapus Background</button>
+    </div><div class="card">
+  <h4>Ubah Akun Admin</h4>
+  <input type="text" id="newUser" placeholder="Username Baru">
+  <input type="password" id="newPass" placeholder="Password Baru">
+  <button onclick="ubahAkun()">Simpan Akun</button>
+</div>
+
+  </div>  <div class="card" style="margin-top:20px">
+    <h4>Data Pesanan</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Produk</th>
+          <th>Harga</th>
+          <th>Customer</th>
+          <th>WhatsApp</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabelAdmin"></tbody>
+    </table>
+  </div>
+</div><script>
+const bg=localStorage.getItem('bgImage');if(bg)document.body.style.backgroundImage=`url(${bg})`;
+let data=JSON.parse(localStorage.getItem('pesanan'))||[];
+let adminUser=localStorage.getItem('adminUser')||'admin';
+let adminPass=localStorage.getItem('adminPass')||'12345';
+let isLogin=localStorage.getItem('adminLogin')==='true';
+if(isLogin){home.classList.add('hidden');dashboard.classList.remove('hidden');render();}
+function toggleMenu(){menuAdmin.style.display=menuAdmin.style.display==='block'?'none':'block';}
+function openLoginPage(){menuAdmin.style.display='none';if(isLogin){dashboard.classList.remove('hidden');home.classList.add('hidden');render();}else{home.classList.add('hidden');loginPage.classList.remove('hidden');}}
+function kirimPesanan(){if(!namaProduk.value||!hargaProduk.value||!namaCustomer.value||!waCustomer.value){alert('Lengkapi data');return;}data.push({namaProduk:namaProduk.value,hargaProduk:hargaProduk.value,namaCustomer:namaCustomer.value,waCustomer:waCustomer.value});localStorage.setItem('pesanan',JSON.stringify(data));namaProduk.value=hargaProduk.value=namaCustomer.value=waCustomer.value='';}
+function login(){if(user.value===adminUser&&pass.value===adminPass){localStorage.setItem('adminLogin','true');isLogin=true;loginPage.classList.add('hidden');dashboard.classList.remove('hidden');render();}else alert('Login salah');}
+function logout(){localStorage.removeItem('adminLogin');isLogin=false;dashboard.classList.add('hidden');home.classList.remove('hidden');}
+function ubahAkun(){if(!newUser.value||!newPass.value){alert('Lengkapi data');return;}localStorage.setItem('adminUser',newUser.value);localStorage.setItem('adminPass',newPass.value);adminUser=newUser.value;adminPass=newPass.value;newUser.value=newPass.value='';alert('Akun admin diubah');}
+function uploadBg(input){const file=input.files[0];const reader=new FileReader();reader.onload=()=>{localStorage.setItem('bgImage',reader.result);document.body.style.backgroundImage=`url(${reader.result})`;};reader.readAsDataURL(file);}
+function hapusBg(){localStorage.removeItem('bgImage');document.body.style.backgroundImage='';}
+function hapusPesanan(i){if(confirm('Yakin hapus pesanan ini?')){data.splice(i,1);localStorage.setItem('pesanan',JSON.stringify(data));render();}}
+function render(){tabelAdmin.innerHTML='';data.forEach((d,i)=>{tabelAdmin.innerHTML+=`<tr><td>${i+1}</td><td>${d.namaProduk}</td><td>Rp ${Number(d.hargaProduk).toLocaleString('id-ID')}</td><td>${d.namaCustomer}</td><td>${d.waCustomer}</td><td><button class='hapus' onclick='hapusPesanan(${i})'>Hapus</button></td></tr>`;});}
+</script></body>
+</html>
